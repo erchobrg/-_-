@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>^_~</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #007BFF;
+        }
+        .error {
+            color: red;
+        }
+        .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="code-form">
+            <input type="text" id="code-input" placeholder="Enter code here" required>
+            <button type="submit">Check</button>
+        </form>
+        <p id="validation-result" class="result"></p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const redeemedCodesKey = 'redeemedCodes';
+            const webhookURL = 'https://discord.com/api/webhooks/1279353138054168596/FKphorwUpSWooNcN88vlQdG823wgPuGMSBvRzsd_VOyG9rPfcngYl3xhcOCCJVGFTcHm';
+
+            function getStoredCodes() {
+                const codes = localStorage.getItem(redeemedCodesKey);
+                return codes ? JSON.parse(codes) : [];
+            }
+
+            function storeCode(code) {
+                const codes = getStoredCodes();
+                codes.push(code);
+                localStorage.setItem(redeemedCodesKey, JSON.stringify(codes));
+            }
+
+            function validateCode(code) {
+                const codeNumber = parseInt(code.replace(/\D/g, ''));
+                return codeNumber >= 69 && codeNumber <= 420;
+            }
+
+            function logCodeToDiscord(code, status) {
+                const message = {
+                    content: `${status}: ${code}`,
+                };
+
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(message),
+                })
+                .then(response => response.json())
+                .then(data => console.log('Success:', data))
+                .catch(error => console.error('Error:', error));
+            }
+
+            const codeForm = document.getElementById('code-form');
+            const codeInput = document.getElementById('code-input');
+            const validationResult = document.getElementById('validation-result');
+
+            codeForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const enteredCode = codeInput.value.trim();
+
+                const redeemedCodes = getStoredCodes();
+                if (redeemedCodes.includes(enteredCode)) {
+                    validationResult.textContent = "Already redeemed lmao";
+                    validationResult.classList.add('error');
+                    logCodeToDiscord(enteredCode, '🚫');
+                } else if (validateCode(enteredCode)) {
+                    storeCode(enteredCode);
+                    validationResult.textContent = "valid";
+                    validationResult.classList.remove('error');
+                    codeInput.disabled = true;
+                    codeForm.querySelector('button').disabled = true;
+                    codeForm.classList.add('disabled');
+                    logCodeToDiscord(enteredCode, '✅');
+                } else {
+                    validationResult.textContent = "invalid";
+                    validationResult.classList.add('error');
+                    logCodeToDiscord(enteredCode, '❌');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="yes.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>^_^</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .kilig {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="kilig">
+        <img src="https://cdn.discordapp.com/avatars/786413310298816533/a_5c159f37f8666cae2832b2fd0bda5f5c.gif?size=4096&ignore=true" alt="">
+        <p id="random-text" class="ay"></p>
+        <p class="ay">copy the code you got and send it to me</p>
+        <img src="KILIG.jpg" alt="">
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const generatedCodesKey = 'generatedCodes';
+
+            function getRandomNumber(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function getRandomBaseCode() {
+                const baseCodes = ["SKIBIDILOVE", "LOVE", "KEY", "KISS", "YVES", "FREAKY", "BABY"];
+                const randomIndex = Math.floor(Math.random() * baseCodes.length);
+                return baseCodes[randomIndex];
+            }
+
+            function generateCode() {
+                const baseCode = getRandomBaseCode();
+                const randomNumber = getRandomNumber(69, 420);
+                return `${baseCode}${randomNumber}`;
+            }
+
+            function getStoredCodes() {
+                const codes = localStorage.getItem(generatedCodesKey);
+                return codes ? JSON.parse(codes) : [];
+            }
+
+            function storeCode(code) {
+                const codes = getStoredCodes();
+                codes.push(code);
+                localStorage.setItem(generatedCodesKey, JSON.stringify(codes));
+            }
+
+            function isCodeUnique(code) {
+                const codes = getStoredCodes();
+                return !codes.includes(code);
+            }
+
+            function createUniqueCode() {
+                let code;
+                do {
+                    code = generateCode();
+                } while (!isCodeUnique(code));
+                storeCode(code);
+                return `your code is: ${code}`;
+            }
+
+            const pElement = document.getElementById('random-text');
+            pElement.textContent = createUniqueCode();
+        });
+    </script>
+</body>
+</html>
